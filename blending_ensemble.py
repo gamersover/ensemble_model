@@ -40,36 +40,6 @@ def blending(train_x, train_y, result_x, clfs):
     final_result = result.mean(axis=1)
     return final_result
 
-def load_data():
-    dataset1 = pd.read_csv("data/dataset1.csv")
-    dataset2 = pd.read_csv("data/dataset2.csv")
-    dataset3 = pd.read_csv("data/dataset3.csv")
-     
-    dataset1.drop_duplicates(inplace=True)
-    dataset2.drop_duplicates(inplace=True)
-    dataset3.drop_duplicates(inplace=True)
-    
-    dataset1.label.replace(-1, 0, inplace=True)
-    dataset2.label.replace(-1, 0, inplace=True)
-    
-    dataset1.fillna(999, inplace=True)
-    dataset2.fillna(999, inplace=True)
-    dataset3.fillna(999, inplace=True)
-    
-    dataset1_x = dataset1.drop(["user_id", "label", "day_gap_before", "day_gap_after"], axis=1)
-    dataset1_y = dataset1.label
-    dataset2_x = dataset2.drop(["user_id", "label", "day_gap_before", "day_gap_after"], axis=1)
-    dataset2_y = dataset2.label
-    
-    dataset12 = pd.concat([dataset1, dataset2], axis=0)
-    dataset12_x = dataset12.drop(["user_id", "label", "day_gap_before", "day_gap_after"], axis=1)
-    dataset12_y = dataset12.label
-    
-    dataset3_preds = dataset3[["user_id", "coupon_id", "date_received"]]
-    dataset3_x = dataset3.drop(["user_id", "coupon_id", "date_received", "day_gap_before", "day_gap_after"], axis=1)
-    
-    print(dataset1_x.shape, dataset2_x.shape, dataset3_x.shape)
-    return dataset12_x, dataset12_y, dataset3_x
 
 def load_gbdt_models():
     params1 = { "n_estimators":100,         
@@ -140,7 +110,6 @@ def load_models(level):
         return [LogisticRegression(), xgb.XGBClassifier()]
     
 def main():
-    dataset12_x, dataset12_y, dataset3_x = load_data()
     clfs = [load_models(1), load_models(2)]
     result = blending(dataset12_x, dataset12_y, dataset3_x, clfs)
 
